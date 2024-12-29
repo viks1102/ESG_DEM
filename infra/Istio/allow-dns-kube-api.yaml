@@ -1,0 +1,16 @@
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-dns-api
+  namespace: kube-system
+spec:
+  podSelector:
+    matchLabels:
+      k8s-app: coredns
+  egress:
+  - to:
+    - ipBlock:
+        cidr: 10.96.0.0/12
+    ports:
+    - protocol: TCP
+      port: 443

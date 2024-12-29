@@ -9,10 +9,9 @@ import (
 	"runtime"
 	"time"
 
-	"github.com/prometheus/client_golang/prometheus/promhttp"
+	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 )
-
 var (
 	// Metric to track HTTP request duration latency
 	requestDuration = prometheus.NewHistogramVec(

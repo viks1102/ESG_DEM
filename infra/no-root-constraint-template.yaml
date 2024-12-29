@@ -1,0 +1,51 @@
+apiVersion: templates.gatekeeper.sh/v1beta1
+kind: ConstraintTemplate
+metadata:
+  name: k8srequirednonrootuser
+  annotations:
+    metadata.gatekeeper.sh/title: "Required Non-Root User"
+    metadata.gatekeeper.sh/version: 1.0.0
+    description: >-
+      Enforces that containers must not run as the root user by checking for the 
+      `runAsNonRoot` security context field in the Pod's containers. If `runAsNonRoot`
+      is not set to `true`, the pod will be rejected.
+spec:
+  crd:
+    spec:
+      names:
+        kind: K8sRequiredNonRootUser
+      validation:
+        openAPIV3Schema:
+          type: object
+          properties:
+            spec:
+              type: object
+              properties:
+                match:
+                  type: object
+                  properties:
+                    kinds:
+                      type: array
+                      items:
+                        type: object
+                        properties:
+                          apiGroups:
+                            type: array
+                            items:
+                              type: string
+                          kinds:
+                            type: array
+                            items:
+                              type: string
+            message:
+              type: string
+  targets:
+    - target: admission.k8s.gatekeeper.sh
+      rego: |
+        package k8srequirednonrootuser
+
+        violation[{"msg": msg}] {
+          container := input.review.object.spec.containers[_]
+          not container.securityContext.runAsNonRoot
+          msg := sprintf("Container %v must set securityContext.runAsNonRoot to true", [container.name])
+        }

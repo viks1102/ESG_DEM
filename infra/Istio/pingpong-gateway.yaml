@@ -1,0 +1,31 @@
+apiVersion: networking.istio.io/v1alpha3
+kind: Gateway
+metadata:
+  name: pingpong-gateway
+  namespace: pingpong-a
+spec:
+  selector:
+    istio: ingressgateway # Use Istio's default ingress gateway
+  servers:
+  - port:
+      number: 80
+      name: http
+      protocol: HTTP
+    hosts:
+    - "pingpong-a.example.com"
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: Gateway
+metadata:
+  name: pingpong-gateway
+  namespace: pingpong-b
+spec:
+  selector:
+    istio: ingressgateway  # This ensures the default ingress gateway is used
+  servers:
+  - port:
+      number: 80
+      name: http
+      protocol: HTTP
+    hosts:
+    - "pingpong-b.example.com"  # Set the DNS name for this service    

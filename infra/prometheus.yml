@@ -16,6 +16,19 @@ data:
     - /etc/config/rules
     - /etc/config/alerts
     scrape_configs:
+    - job_name: "pingpong-app"
+        kubernetes_sd_configs:
+          - role: pod
+            namespaces:
+              names:
+                - pingpong-a  # Replace with the actual namespace where your app is deployed
+        relabel_configs:
+          - action: replace
+            target_label: __address__
+            replacement: "pingponger-a.pingpong-a:9080"  # Replace with your service and port
+          - action: replace
+            target_label: __metrics_path__
+            replacement: "/metrics"  # The path where your app exposes Prometheus metrics
     - job_name: prometheus
       static_configs:
       - targets:
